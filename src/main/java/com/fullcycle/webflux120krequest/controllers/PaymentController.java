@@ -47,22 +47,22 @@ public class PaymentController {
 			// Então dentro do meu método eu vou fazer um pooling pra onde? Para o meu banco de dados. Não recomendado fazer isso produtivamente,
 			// é mais pra demonstrar o poder do reactor.
 
-			.flatMap(payment -> {
-				// A cada 1 segundo, vou ao banco e busco o pagamento
-				// verifio se está aprovado e se sim, volto para Mono
-				// Basicamente estou fazendo um laço de repetição a grosso modo (é um loop) para fazer um pooling
-				// que é basicamente eu ficar indo toda hora no banco buscando esse meu payment e se eu vou passar esse evento pra frente
-				// quando o meu pagamento estiver aprovado. Quando passar o primeiro evento é esse cara que quero usar e converte da cadeia
-				// de flux para a cadeia de mono.
-				// Tudo isso é feito segurando a requisição do client porem sem bloquear outras chamadas.
-				final Mono<Payment> mono = Flux.interval(Duration.ofSeconds(1))
-					.doOnNext(it -> log.info("Next tick - {}", it))
-					.flatMap(tick -> this.repository.getPayment(userId))
-					.filter(it -> Payment.PaymentStatus.APPROVED == it.getStatus())
-					.next(); // volto do flux para o mono
-
-				return mono;
-			})
+//			.flatMap(payment -> {
+//				// A cada 1 segundo, vou ao banco e busco o pagamento
+//				// verifio se está aprovado e se sim, volto para Mono
+//				// Basicamente estou fazendo um laço de repetição a grosso modo (é um loop) para fazer um pooling
+//				// que é basicamente eu ficar indo toda hora no banco buscando esse meu payment e se eu vou passar esse evento pra frente
+//				// quando o meu pagamento estiver aprovado. Quando passar o primeiro evento é esse cara que quero usar e converte da cadeia
+//				// de flux para a cadeia de mono.
+//				// Tudo isso é feito segurando a requisição do client porem sem bloquear outras chamadas.
+//				final Mono<Payment> mono = Flux.interval(Duration.ofSeconds(1))
+//					.doOnNext(it -> log.info("Next tick - {}", it))
+//					.flatMap(tick -> this.repository.getPayment(userId))
+//					.filter(it -> Payment.PaymentStatus.APPROVED == it.getStatus())
+//					.next(); // volto do flux para o mono
+//
+//				return mono;
+//			})
 			.doOnNext(next -> log.info("Payment processed {}", userId))
 			.timeout(Duration.ofSeconds(20)) //Posso colocar um timeout para parar a execução se demorar
 			//			.retry(3) // Caso der timeout posso fazer X retries
@@ -77,7 +77,7 @@ public class PaymentController {
 		final List<String> _ids = Arrays.asList(ids.split(","));
 		log.info("Collecting {} payments", _ids.size());
 		return Flux.fromIterable(_ids)
-			.flatMap(this.repository::getPayment);
+			.flatMap(this.repository::getPayment, 2000); //permite uma concorrencia de 2000
 	}
 
 	@GetMapping("ids")

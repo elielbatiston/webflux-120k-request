@@ -41,7 +41,6 @@ public class PaymentRepository {
 			log.info("Saving payment transaction for user {}", userId);
 			return this.database.save(userId, payment);
 		})
-			.delayElement(Duration.ofMillis(20)) // delay reativo que não bloca
 			.subscribeOn(DB_SCHEDULER)
 			.doOnNext(next -> log.info("Payment received {}", next.getUserId()));
 	}
