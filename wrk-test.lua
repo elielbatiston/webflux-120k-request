@@ -1,4 +1,4 @@
-// simula 500 conexões em 10 threads diferentes por 30 segundos
+# simula 500 conexões em 10 threads diferentes por 30 segundos
 -- wrk -c 500 -t 10 -d 30s -s ./wrk-test.lua --latency http://localhost:8080/payments
 
 -- init random
