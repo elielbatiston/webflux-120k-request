@@ -4,9 +4,9 @@ Os schedulers é uma abstração de pool de threads.
 OBS: Quando não damos um subscribeOn, não subescrevemos para uma das threads abaixo 
 dessa forma, estaremos nas threads do event loop do netty que não é interessante bloquear essas threads.
 
-=============================================
+============================================
 Schedulers.parallel();
-=============================================
+============================================
 Feito especificamente para tarefas que mexem com CPU. 
 Abre threads de acordo com a quantidade de CPU que vc tem na maquina
 
@@ -24,9 +24,9 @@ de CPU como:
 
 Se fizermos isso no stream do java e blocarmos as threads desse cara, prejudicamos a JVM inteira
 
-=============================================
+============================================
 Schedulers.boundedElastic();
-=============================================
+============================================
 É o equivalente a um scheduler específico para I/O. 
 Ou seja, toda chamada que é bloqueante deve ser colocado nessa scheduler.
 Por exemplo: 
@@ -36,17 +36,17 @@ Por exemplo:
 Esse é um pool de threads que cresce ao infinito (por isso que é Elastic) e não tem controle e reduz conforme não for sendo utilizado. 
 Por isso ele foi feito para I/O bloqueante. 
 
-=============================================
+============================================
 Schedulers.immediate();
-=============================================
+============================================
 
-=============================================
+============================================
 Schedulers.single();
-=============================================
+============================================
 
-=============================================
+============================================
 Exemplo de tratamento de exceções. O jeito tradiconal não funciona
-=============================================
+============================================
 private final Transaction t = transactionManager.createTransaction() ;
 
 @PostMapping
@@ -56,9 +56,9 @@ public Mono<Payment> createPayment() {
         .flatMap(payment -> t.commit())	
 }
 
-=============================================
+============================================
 Exemplo de tratamento de erro
-=============================================
+============================================
 @PostMapping
 public Mono<Payment> createPayment() {
     return this.repository.createPayment()
@@ -85,9 +85,9 @@ public Mono<Payment> createPayment() {
 	}
 }
 
-=============================================
+============================================
 Exemplo de tratamento de fluxo vazio (vide explicacoes abaixo)
-=============================================
+============================================
 @PostMapping
 public Mono<Payment> createPayment() {
     return this.repository.createPayment()
