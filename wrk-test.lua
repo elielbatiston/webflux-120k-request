@@ -1,5 +1,6 @@
 # simula 500 conexões em 10 threads diferentes por 30 segundos
 -- wrk -c 500 -t 10 -d 30s -s ./wrk-test.lua --latency http://localhost:8080/payments
+-- wrk -c 100 -t 5 -d 30s -s ./wrk-test.lua --latency http://localhost:8080/payments
 
 -- init random
 setup = function(thread)
@@ -8,7 +9,7 @@ end
 
 request = function()
     local path = "/payments"
-    local body = "{\"userId\":" ..math.random(0,1000) .. "}"
+    local body = "{\"userId\":" ..math.random(0,100000000000) .. "}"
 
     wrk.method = "POST"
     wrk.headers["Content-Type"] = "application/json"
